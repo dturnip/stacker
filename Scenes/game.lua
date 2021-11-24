@@ -9,6 +9,13 @@ local backGroup
 local mainGroup
 local uiGroup
 
+local GameState = {
+  score = 0,
+  lives = 3,
+  next_bufs = {},
+  crates_store = {},
+}
+
 -- create()
 function scene:create(event)
   local sceneGroup = self.view
@@ -143,6 +150,39 @@ function scene:create(event)
   side_spikes_r:scale(-1, 1)
   side_spikes_r.x = display.actualContentWidth - 6
   side_spikes_r.y = display.contentCenterY
+
+  local ui_overlay = display.newRect(
+    uiGroup,
+    display.contentCenterX,
+    -10,
+    display.actualContentWidth + 50,
+    display.actualContentHeight / 6
+  )
+
+  ui_overlay:setFillColor(1, 0, 0)
+  -- ui_overlay:setFillColor(0.2)
+  ui_overlay.strokeWidth = 5
+  ui_overlay:setStrokeColor(0.6)
+
+  local lives_display = display.newText(
+    uiGroup,
+    "Lives: " .. GameState.lives,
+    50,
+    -- display.actualContentHeight / 50,
+    ui_overlay.y + 20,
+    "Menlo",
+    15
+  )
+
+  local score_display = display.newText(
+    uiGroup,
+    "00000",
+    -- GameState.score,
+    50,
+    ui_overlay.y - 10,
+    "Menlo",
+    25
+  )
 
   -- tnt_crate:addEventListener("tap", function(event)
   --   event.target:play()
