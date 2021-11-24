@@ -4,6 +4,5 @@ local composer = require("composer")
 
 display.setStatusBar(display.HiddenStatusBar)
 
-composer.gotoScene("Scenes.menu", {})
-
-print(composer.getSceneName("current"))
+math.randomseed(os.time())
+composer.gotoScene("Scenes.game", {})
