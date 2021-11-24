@@ -35,6 +35,7 @@ function scene:create(event)
   background:setFillColor(0.2)
 
   local platform = display.newRect(
+    mainGroup,
     display.contentCenterX,
     display.actualContentHeight - 50,
     display.actualContentWidth - 100,
