@@ -16,53 +16,58 @@ function scene:create(event)
   background.x, background.y = display.contentCenterX, display.contentCenterY
   background:setFillColor(0.2)
 
-  local title = display.newText("Stacker", display.contentCenterX, display.contentCenterY - 100, "Menlo" , 30)
+  local title = display.newText(
+    "Stacker",
+    display.contentCenterX,
+    display.contentCenterY - 100,
+    "Menlo",
+    30
+  )
   local tableutils = require("fplua.utils.tableutils")
 
-  local start_bt = widget.newButton(
-    {
-        width = 200,
-        height = 40,
-        emboss = true,
-        shape = "roundedRect",
-        cornerRadius = 2,
-        labelColor = {default={1, 1, 1, 1}, over={0, 1, 0, 1}},
-        fillColor = {default = {1, 0, 0, 1}, over = {1, 0.1, 0.7, 0.4}},
-        strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
-        strokeWidth = 4,
-        id = "start_bt",
-        label = "Start",
-        font = "Menlo",
-        onEvent = function(event)
-            if event.phase == "ended" then print("clicked") end
-        end
-    }
-)
+  local start_bt = widget.newButton({
+    width = 200,
+    height = 40,
+    emboss = true,
+    shape = "roundedRect",
+    cornerRadius = 2,
+    labelColor = { default = { 1, 1, 1, 1 }, over = { 0, 1, 0, 1 } },
+    fillColor = { default = { 1, 0, 0, 1 }, over = { 1, 0.1, 0.7, 0.4 } },
+    strokeColor = { default = { 1, 0.4, 0, 1 }, over = { 0.8, 0.8, 1, 1 } },
+    strokeWidth = 4,
+    id = "start_bt",
+    label = "Start",
+    font = "Menlo",
+    onEvent = function(event)
+      if event.phase == "ended" then
+        print("clicked")
+      end
+    end,
+  })
 
-start_bt.x, start_bt.y = display.contentCenterX, display.contentCenterY
+  start_bt.x, start_bt.y = display.contentCenterX, display.contentCenterY
 
-local high_bt = widget.newButton(
-    {
-        width = 200,
-        height = 40,
-        emboss = true,
-        shape = "roundedRect",
-        cornerRadius = 2,
-        labelColor = {default={1, 1, 1, 1}, over={0, 1, 0, 1}},
-        fillColor = {default = {1, 0, 0, 1}, over = {1, 0.1, 0.7, 0.4}},
-        strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
-        strokeWidth = 4,
-        id = "button1",
-        label = "Highscores",
-        font = "Menlo",
-        onEvent = function(event)
-            if event.phase == "ended" then print("clicked") end
-        end
-    }
-)
+  local high_bt = widget.newButton({
+    width = 200,
+    height = 40,
+    emboss = true,
+    shape = "roundedRect",
+    cornerRadius = 2,
+    labelColor = { default = { 1, 1, 1, 1 }, over = { 0, 1, 0, 1 } },
+    fillColor = { default = { 1, 0, 0, 1 }, over = { 1, 0.1, 0.7, 0.4 } },
+    strokeColor = { default = { 1, 0.4, 0, 1 }, over = { 0.8, 0.8, 1, 1 } },
+    strokeWidth = 4,
+    id = "button1",
+    label = "Highscores",
+    font = "Menlo",
+    onEvent = function(event)
+      if event.phase == "ended" then
+        print("clicked")
+      end
+    end,
+  })
 
-high_bt.x, high_bt.y = display.contentCenterX, display.contentCenterY + 100
-
+  high_bt.x, high_bt.y = display.contentCenterX, display.contentCenterY + 100
 end
 
 function scene:show(event)
