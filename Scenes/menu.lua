@@ -7,6 +7,7 @@ function scene:create(event)
   local sceneGroup = self.view
 
   local background = display.newRect(
+    sceneGroup,
     0,
     0,
     display.actualContentWidth,
@@ -17,6 +18,7 @@ function scene:create(event)
   background:setFillColor(0.2)
 
   local title = display.newText(
+    sceneGroup,
     "Stacker",
     display.contentCenterX,
     display.contentCenterY - 100,
@@ -40,12 +42,18 @@ function scene:create(event)
     font = "Menlo",
     onEvent = function(event)
       if event.phase == "ended" then
-        print("clicked")
+        composer.gotoScene("Scenes.game", {
+          effect = "slideLeft",
+          time = 1000,
+        })
+        print("Start")
+        print(composer.getSceneName("current"))
       end
     end,
   })
 
   start_bt.x, start_bt.y = display.contentCenterX, display.contentCenterY
+  sceneGroup:insert(start_bt)
 
   local high_bt = widget.newButton({
     width = 200,
@@ -68,6 +76,7 @@ function scene:create(event)
   })
 
   high_bt.x, high_bt.y = display.contentCenterX, display.contentCenterY + 100
+  sceneGroup:insert(high_bt)
 end
 
 function scene:show(event)
@@ -89,6 +98,7 @@ function scene:hide(event)
     -- Before disappears
   elseif phase == "did" then
     -- After disappears
+    composer.removeScene("Scenes.menu")
   end
 end
 
