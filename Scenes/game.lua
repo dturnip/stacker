@@ -219,7 +219,10 @@ function scene:create(event)
 
   local lives_display = display.newText(
     uiGroup,
-    "Lives: " .. GameState.lives,
+    GameState.lives == 3 and "❤️ ❤️ ❤️"
+      or GameState.lives == 2 and "❤️ ❤️"
+      or GameState.lives == 1 and "❤️"
+      or "❌",
     55,
     -- display.actualContentHeight / 50,
     ui_overlay.y + 20,
