@@ -322,7 +322,9 @@ function scene:show(event)
   elseif phase == "did" then
     -- Code here runs when the scene is entirely on screen
     physics.start()
-    instantiate_crate(GameState.next_bufs[1])
+    timer.performWithDelay(1000, function()
+      instantiate_crate(GameState.next_bufs[1])
+    end)
   end
 end
 
