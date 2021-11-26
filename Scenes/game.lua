@@ -10,6 +10,12 @@ local backGroup
 local mainGroup
 local uiGroup
 
+local lives_display
+local score_display
+local next_buf_one
+local next_buf_two
+local next_buf_three
+
 local GameState = {
   score = 0,
   lives = 3,
@@ -68,7 +74,66 @@ local function spawn_layer(y, tone)
   layer:setFillColor(tone)
 end
 
-local function instantiate_crate(buf)
+local function render_ui()
+  lives_display.text = GameState.lives == 3 and "❤️ ❤️ ❤️"
+    or GameState.lives == 2 and "❤️ ❤️"
+    or GameState.lives == 1 and "❤️"
+    or "❌"
+  
+  score_display.text = GameState.score
+  next_buf_one.text = parse_move_buf(GameState.next_bufs[1])
+  next_buf_two.text = parse_move_buf(GameState.next_bufs[2])
+  next_buf_three.text = parse_move_buf(GameState.next_bufs[3])
+end
+
+-- local function instantiate_crate(buf)
+--   local crate = display.newImageRect(
+--     mainGroup,
+--     "Assets/Crate.png",
+--     59.25,
+--     59.25
+--   )
+
+--   local dir = buf:sub(1, 1)
+
+--   local spawnX_pos = dir == "L" and display.actualContentWidth
+--     or dir == "R" and 0
+--     or nil
+--   local spawnY_pos = GameState.first_spawnY - 59.25 * GameState.spawnY_level
+--   crate.x, crate.y = spawnX_pos, spawnY_pos
+
+--   crate.alpha = 0.1
+
+--   transition.to(crate, {
+--     alpha = 1,
+--     time = 1000,
+--     x = dir == "L" and display.actualContentWidth - 75
+--       or dir == "R" and 75
+--       or nil,
+--   })
+
+--   local linear_transform
+
+--   local function drop()
+--     transition.cancel(linear_transform)
+--     physics.addBody(crate, "dynamic", {})
+--     Runtime:removeEventListener("tap", drop)
+
+--   end
+
+--   timer.performWithDelay(1000, function()
+--     Runtime:addEventListener("tap", drop)
+--     linear_transform = transition.to(crate, {
+--       time = 4000,
+--       x = dir == "L" and 0 or dir == "R" and display.actualContentWidth or nil,
+--     })
+--   end)
+
+--   table.insert(GameState.crates_store, crate)
+-- end
+
+local function spawn_buf(buf)
+  local function instantiate_crate(buf, ct)
   local crate = display.newImageRect(
     mainGroup,
     "Assets/Crate.png",
@@ -89,12 +154,56 @@ local function instantiate_crate(buf)
   transition.to(crate, {
     alpha = 1,
     time = 1000,
-    x = dir == "L" and display.actualContentWidth - 100
-      or dir == "R" and 100
+    x = dir == "L" and display.actualContentWidth - 75
+      or dir == "R" and 75
       or nil,
   })
 
+  local linear_transform
+
+  local function drop()
+    transition.cancel(linear_transform)
+    physics.addBody(crate, "dynamic", {})
+    Runtime:removeEventListener("tap", drop)
+
+    ct = ct - 1
+    if ct > 0 then
+      timer.performWithDelay(500, function()
+        instantiate_crate(buf, ct)
+      end)
+    else
+      -- TODO: Check if the spawnY_level is at the max, then set it back to 0
+      GameState.spawnY_level = GameState.spawnY_level + 1
+    end
+  end
+
+  timer.performWithDelay(1000, function()
+    Runtime:addEventListener("tap", drop)
+    linear_transform = transition.to(crate, {
+      time = 4000,
+      x = dir == "L" and 0 or dir == "R" and display.actualContentWidth or nil,
+    })
+  end)
+
   table.insert(GameState.crates_store, crate)
+end
+
+  local curr_buf = GameState.next_bufs[1]
+  local dir, ct = curr_buf:sub(1, 1), tonumber(curr_buf:sub(2, 2), 10)
+
+  instantiate_crate(curr_buf, ct)
+
+  local new_buf = (math.random() > 0.5 and "L" or "R") .. math.random(1, 3)
+
+  GameState.next_bufs[1] = GameState.next_bufs[2]
+  GameState.next_bufs[2] = GameState.next_bufs[3]
+  GameState.next_bufs[3] = new_buf
+
+  render_ui()
+end
+
+local function loop()
+  --TODO: asdf
 end
 
 -- create()
@@ -217,23 +326,18 @@ function scene:create(event)
   ui_overlay.strokeWidth = 5
   ui_overlay:setStrokeColor(0.6)
 
-  local lives_display = display.newText(
+  lives_display = display.newText(
     uiGroup,
-    GameState.lives == 3 and "❤️ ❤️ ❤️"
-      or GameState.lives == 2 and "❤️ ❤️"
-      or GameState.lives == 1 and "❤️"
-      or "❌",
+    "",
     55,
-    -- display.actualContentHeight / 50,
     ui_overlay.y + 20,
     "Menlo",
     15
   )
 
-  local score_display = display.newText(
+  score_display = display.newText(
     uiGroup,
-    "000000",
-    -- GameState.score,
+    "",
     55,
     ui_overlay.y - 10,
     "Menlo",
@@ -266,32 +370,34 @@ function scene:create(event)
 
   -- UI Move Bufs
 
-  local next_buf_one = display.newText(
+  next_buf_one = display.newText(
     uiGroup,
-    parse_move_buf(GameState.next_bufs[1]),
+    "",
     moves_display_container.x - moves_display_container.width / 3,
     moves_display_container.y,
     "Menlo",
     20
   )
 
-  local next_buf_two = display.newText(
+  next_buf_two = display.newText(
     uiGroup,
-    parse_move_buf(GameState.next_bufs[2]),
+    "",
     moves_display_container.x,
     moves_display_container.y,
     "Menlo",
     20
   )
 
-  local next_buf_three = display.newText(
+  next_buf_three = display.newText(
     uiGroup,
-    parse_move_buf(GameState.next_bufs[3]),
+    "",
     moves_display_container.x + moves_display_container.width / 3,
     moves_display_container.y,
     "Menlo",
     20
   )
+
+  render_ui()
 
   -- tnt_crate:addEventListener("tap", function(event)
   --   event.target:play()
@@ -322,9 +428,12 @@ function scene:show(event)
   elseif phase == "did" then
     -- Code here runs when the scene is entirely on screen
     physics.start()
-    timer.performWithDelay(1000, function()
-      instantiate_crate(GameState.next_bufs[1])
-    end)
+    -- timer.performWithDelay(1000, function()
+    --   -- instantiate_crate(GameState.next_bufs[1])
+    --   spawn_buf(GameState.next_bufs[1])
+    --   -- Fix timing bug
+    --   -- spawn_buf(GameState.next_bufs[2])
+    -- end)
   end
 end
 
