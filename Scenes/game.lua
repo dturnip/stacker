@@ -23,6 +23,7 @@ local GameState = {
   crates_store = {},
   first_spawnY = display.actualContentHeight - 140,
   spawnY_level = 0,
+  spikeCollided = false,
 }
 
 local frames_tnt_crate = {
@@ -135,6 +136,7 @@ end
 
 function drop(crate, buf)
   GameState.ct = GameState.ct - 1
+  GameState.spikeCollided = false
 
   crate.bodyType = "dynamic"
   crate.alpha = 1
@@ -150,7 +152,7 @@ function drop(crate, buf)
   else
     next_layer()
     spawn_buf(GameState.next_bufs[1])
-    return
+    -- return
   end
 end
 
@@ -210,7 +212,7 @@ function instantiate_crate(buf, ct)
 end
 
 local function tapEvent()
-  if GameState.curr_crate ~= nil then
+  if GameState.curr_crate ~= nil and GameState.spikeCollided == false then
     transition.cancel()
     drop(GameState.curr_crate, GameState.curr_buf)
     GameState.curr_crate = nil
@@ -241,10 +243,11 @@ local function onCollision(event)
     then
       local crate = acol.name == "crate" and acol or bcol
       -- Collided with a spike
+      GameState.spikeCollided = true
       GameState.lives = GameState.lives - 1
       drop(crate, GameState.curr_buf)
       GameState.curr_crate = nil
-      timer.performWithDelay(1000, function()
+      timer.performWithDelay(150, function()
         display.remove(crate)
       end)
       render_ui()
@@ -264,15 +267,27 @@ local function onCollision(event)
         GameState.curr_crate.bodyType = "dynamic"
         GameState.curr_crate.alpha = 1
         GameState.curr_crate.gravityScale = 1
-        GameState.curr_crate.isSensor = false
+        GameState.curr_crate.isSensor = true
         GameState.curr_crate.isFixedRotation = true
         GameState.curr_crate.bounce = 0
 
-        timer.performWithDelay(100, function()
-          if GameState.ct > 0 then
-            tapEvent()
-          end
-        end)
+        timer.performWithDelay(200, function()
+          GameState.curr_crate.isSensor = false
+          tapEvent()
+        end);
+
+        -- local ref_crate = GameState.curr_crate
+        -- GameState.curr_crate = nil
+
+        -- timer.performWithDelay(200, function()
+        --   ref_crate.isSensor = false
+
+        --   if GameState.spikeCollided == false then
+        --     if GameState.ct > 0 then
+        --       drop(ref_crate, GameState.curr_buf)
+        --     end
+        --   end
+        -- end);
       end
     end
   end
