@@ -82,6 +82,10 @@ local function spawn_layer(y, tone)
 end
 
 local function render_ui()
+  if GameState.lives <= 0 then
+    -- Dead
+  end
+
   lives_display.text = GameState.lives == 3 and "❤️ ❤️ ❤️"
     or GameState.lives == 2 and "❤️ ❤️"
     or GameState.lives == 1 and "❤️"
@@ -136,7 +140,6 @@ end
 
 function drop(crate, buf)
   GameState.ct = GameState.ct - 1
-  GameState.spikeCollided = false
 
   crate.bodyType = "dynamic"
   crate.alpha = 1
@@ -198,6 +201,7 @@ function instantiate_crate(buf, ct)
       physics.addBody(crate, "dynamic", { isSensor = true })
       crate.gravityScale = 0
       GameState.curr_crate = crate
+      GameState.crates_collided = false
     end,
   })
 
@@ -212,7 +216,7 @@ function instantiate_crate(buf, ct)
 end
 
 local function tapEvent()
-  if GameState.curr_crate ~= nil and GameState.spikeCollided == false then
+  if GameState.curr_crate ~= nil then
     transition.cancel()
     drop(GameState.curr_crate, GameState.curr_buf)
     GameState.curr_crate = nil
@@ -236,17 +240,20 @@ local function onCollision(event)
 
   if phase == "began" then
     local acol, bcol = event.object1, event.object2
-
+    -- Debug the collisions
+    -- print(GameState.crates_collided)
     if
       acol.name == "crate" and bcol.name == "spike"
       or acol.name == "spike" and bcol.name == "crate"
     then
       local crate = acol.name == "crate" and acol or bcol
       -- Collided with a spike
-      GameState.spikeCollided = true
       GameState.lives = GameState.lives - 1
-      drop(crate, GameState.curr_buf)
-      GameState.curr_crate = nil
+      if GameState.crates_collided == false then
+        drop(crate, GameState.curr_buf)
+        GameState.curr_crate = nil
+      end
+
       timer.performWithDelay(150, function()
         display.remove(crate)
       end)
@@ -273,8 +280,9 @@ local function onCollision(event)
 
         timer.performWithDelay(200, function()
           GameState.curr_crate.isSensor = false
+          GameState.crates_collided = true
           tapEvent()
-        end);
+        end)
 
         -- local ref_crate = GameState.curr_crate
         -- GameState.curr_crate = nil
