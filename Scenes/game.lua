@@ -63,6 +63,20 @@ local function parse_move_buf(buf)
   return buf:gsub("L", "<< "):gsub("R", ">> ")
 end
 
+local function parse_score(score)
+  local str_score = tostring(score)
+  local str_buf = ""
+
+  if #str_score < 6 then
+    -- https://github.com/dturnip/fplua/blob/main/gens/range.lua
+    for _ in range(6 - #str_score + 1) do
+      str_buf = str_buf .. "0"
+    end
+  end
+
+  return str_buf .. str_score
+end
+
 local function spawn_layer(y, tone)
   local layer = display.newRect(
     backGroup,
