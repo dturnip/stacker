@@ -97,7 +97,19 @@ end
 
 local function render_ui()
   if GameState.lives <= 0 then
-    -- Dead
+    physics.pause()
+    -- Free memory
+    -- https://github.com/dturnip/fplua/wiki/Iterator-Class
+    Iterator.from(GameState.crates_store):foreach(function(crate)
+      display.remove(crate)
+      crate = nil
+    end)
+    composer.setVariable("score", GameState.score)
+    composer.gotoScene("Scenes.died", {
+      effect = "slideLeft",
+      time = 1000,
+    })
+    return
   end
 
   lives_display.text = GameState.lives == 3 and "❤️ ❤️ ❤️"
@@ -105,7 +117,7 @@ local function render_ui()
     or GameState.lives == 1 and "❤️"
     or "❌"
 
-  score_display.text = GameState.score
+  score_display.text = parse_score(GameState.score)
   next_buf_one.text = parse_move_buf(GameState.next_bufs[1])
   next_buf_two.text = parse_move_buf(GameState.next_bufs[2])
   next_buf_three.text = parse_move_buf(GameState.next_bufs[3])
@@ -119,9 +131,24 @@ local spawn_buf = function(buf) end
 local next_layer = function() end
 
 function next_layer()
-  -- TODO: Check if the spawnY_level is at the max, then set it back to 0
-  if GameState.spawnY_level > 6 then
-    -- print(#GameState.crates_store)
+  if GameState.spawnY_level > 5 then
+    GameState.spawnY_level = 0
+    GameState.score = GameState.score + 300
+    -- 6 buffers complete
+    -- TODO: Play epic sound
+
+    Iterator.from(GameState.crates_store):foreach(function(crate)
+      transition.to(crate, {
+        alpha = 0,
+        time = 500,
+        onComplete = function()
+          display.remove(crate)
+          crate = nil
+        end,
+      })
+      -- display.remove(crate)
+      -- crate = nil
+    end)
     return
   end
   GameState.spawnY_level = GameState.spawnY_level + 1
@@ -174,59 +201,59 @@ function drop(crate, buf)
 end
 
 function instantiate_crate(buf, ct)
-  -- if ct <= 0 then
-  -- print("Done")
-  -- end
+  -- TODO: Randomizer for two different types of crate:
+  -- * TNT Crate
+  -- * Crate with spike on top
 
-  -- ct = ct - 1
-  -- GameState.ct = ct
-  -- ct = nil
   GameState.ct = ct
+  GameState.score = GameState.score + 100
+  render_ui()
 
-  local crate = display.newImageRect(
-    mainGroup,
-    "Assets/Crate.png",
-    59.25,
-    59.25
-  )
+  if GameState.lives > 0 then
+      local crate = display.newImageRect(
+      mainGroup,
+      "Assets/Crate.png",
+      59.25,
+      59.25
+    )
 
-  crate.name = "crate"
+    crate.name = "crate"
 
-  local dir = buf:sub(1, 1)
+    local dir = buf:sub(1, 1)
 
-  local spawnX_pos = dir == "L" and display.actualContentWidth
-    or dir == "R" and 0
-    or nil
-  local spawnY_pos = GameState.first_spawnY - 59.25 * GameState.spawnY_level
-  crate.x, crate.y = spawnX_pos, spawnY_pos
+    local spawnX_pos = dir == "L" and display.actualContentWidth
+      or dir == "R" and 0
+      or nil
+    local spawnY_pos = GameState.first_spawnY - 59.25 * GameState.spawnY_level
+    crate.x, crate.y = spawnX_pos, spawnY_pos
 
-  crate.alpha = 0.1
+    crate.alpha = 0.1
 
-  local phase_transform
-  local linear_transform
+    local phase_transform
+    local linear_transform
 
-  phase_transform = transition.to(crate, {
-    alpha = 1,
-    time = 1000,
-    x = dir == "L" and display.actualContentWidth - 60
-      or dir == "R" and 60
-      or nil,
-    onComplete = function()
-      physics.addBody(crate, "dynamic", { isSensor = true })
-      crate.gravityScale = 0
-      GameState.curr_crate = crate
-      GameState.crates_collided = false
-    end,
-  })
-
-  timer.performWithDelay(1000, function()
-    linear_transform = transition.to(crate, {
-      time = 4000,
-      x = dir == "L" and 0 or dir == "R" and display.actualContentWidth or nil,
+    phase_transform = transition.to(crate, {
+      alpha = 1,
+      time = 1000,
+      x = dir == "L" and display.actualContentWidth - 55
+        or dir == "R" and 55
+        or nil,
+      onComplete = function()
+        physics.addBody(crate, "dynamic", { isSensor = true })
+        crate.gravityScale = 0
+        GameState.curr_crate = crate
+        GameState.crates_collided = false
+        table.insert(GameState.crates_store, crate)
+      end,
     })
-  end)
 
-  table.insert(GameState.crates_store, crate)
+    timer.performWithDelay(1000, function()
+      linear_transform = transition.to(crate, {
+        time = 4000,
+        x = dir == "L" and 0 or dir == "R" and display.actualContentWidth or nil,
+      })
+    end)
+  end
 end
 
 local function tapEvent()
@@ -246,7 +273,7 @@ function spawn_buf(buf)
 
   instantiate_crate(curr_buf, GameState.ct)
 
-  Runtime:addEventListener("tap", tapEvent)
+  -- Runtime:addEventListener("tap", tapEvent)
 end
 
 local function onCollision(event)
@@ -293,7 +320,9 @@ local function onCollision(event)
         GameState.curr_crate.bounce = 0
 
         timer.performWithDelay(200, function()
-          GameState.curr_crate.isSensor = false
+          if GameState.curr_crate then
+            GameState.curr_crate.isSensor = false
+          end
           GameState.crates_collided = true
           tapEvent()
         end)
@@ -313,10 +342,6 @@ local function onCollision(event)
       end
     end
   end
-end
-
-local function loop()
-  --TODO: asd
 end
 
 -- create()
@@ -540,6 +565,7 @@ function scene:show(event)
     end)
 
     Runtime:addEventListener("collision", onCollision)
+    Runtime:addEventListener("tap", tapEvent)
   end
 end
 
@@ -552,6 +578,10 @@ function scene:hide(event)
     -- Code here runs when the scene is on screen (but is about to go off screen)
   elseif phase == "did" then
     -- Code here runs immediately after the scene goes entirely off screen
+    Runtime:removeEventListener("collision", onCollision)
+    Runtime:removeEventListener("tap", tapEvent)
+    physics.pause()
+    composer.removeScene("Scenes.game")
   end
 end
 
