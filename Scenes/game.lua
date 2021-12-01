@@ -24,6 +24,7 @@ local GameState = {
   crates_store = {},
   first_spawnY = display.actualContentHeight - 140,
   spawnY_level = 0,
+  died = false,
 }
 
 local frames_tnt_crate = {
@@ -74,7 +75,7 @@ local function parse_score(score)
     end
   end
 
-  return str_buf .. str_score
+  return (str_buf .. str_score):gsub("0", "O")
 end
 
 local function spawn_layer(y, tone)
@@ -98,17 +99,24 @@ end
 local function render_ui()
   if GameState.lives <= 0 then
     physics.pause()
+    GameState.died = true
+
+    composer.setVariable("score", GameState.score)
     -- Free memory
     -- https://github.com/dturnip/fplua/wiki/Iterator-Class
     Iterator.from(GameState.crates_store):foreach(function(crate)
       display.remove(crate)
       crate = nil
     end)
-    composer.setVariable("score", GameState.score)
+
+    -- TODO: Add an intemediary scene so end of buffer bug doesn't happen:
+    -- Scenes.game -> Scenes.trans -> Scenes.died
+
     composer.gotoScene("Scenes.died", {
-      effect = "slideLeft",
-      time = 1000,
+      effect = "crossFade",
+      time = 1500,
     })
+
     return
   end
 
@@ -196,7 +204,6 @@ function drop(crate, buf)
   else
     next_layer()
     spawn_buf(GameState.next_bufs[1])
-    -- return
   end
 end
 
@@ -206,8 +213,11 @@ function instantiate_crate(buf, ct)
   -- * Crate with spike on top
 
   GameState.ct = ct
-  GameState.score = GameState.score + 100
-  render_ui()
+
+  if not GameState.died then
+    GameState.score = GameState.score + 100
+    render_ui()
+  end
 
   if GameState.lives > 0 then
     local crate = display.newImageRect(

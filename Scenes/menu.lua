@@ -33,9 +33,18 @@ function scene:create(event)
     emboss = true,
     shape = "roundedRect",
     cornerRadius = 2,
-    labelColor = { default = { 1, 1, 1, 1 }, over = { 0, 1, 0, 1 } },
-    fillColor = { default = { 1, 0, 0, 1 }, over = { 1, 0.1, 0.7, 0.4 } },
-    strokeColor = { default = { 1, 0.4, 0, 1 }, over = { 0.8, 0.8, 1, 1 } },
+    labelColor = {
+      default = { 1, 1, 1, 1 },
+      over = { 1, 1, 1, 0.8 },
+    },
+    fillColor = {
+      default = { 205 / 255, 153 / 255, 69 / 255, 1 },
+      over = { 205 / 255, 153 / 255, 69 / 255, 0.8 },
+    },
+    strokeColor = {
+      default = { 154 / 255, 105 / 255, 38 / 255, 1 },
+      over = { 154 / 255, 105 / 255, 38 / 255, 0.8 },
+    },
     strokeWidth = 4,
     id = "start_bt",
     label = "Start",
@@ -46,8 +55,6 @@ function scene:create(event)
           effect = "slideLeft",
           time = 1000,
         })
-        print("Start")
-        print(composer.getSceneName("current"))
       end
     end,
   })
@@ -61,9 +68,18 @@ function scene:create(event)
     emboss = true,
     shape = "roundedRect",
     cornerRadius = 2,
-    labelColor = { default = { 1, 1, 1, 1 }, over = { 0, 1, 0, 1 } },
-    fillColor = { default = { 1, 0, 0, 1 }, over = { 1, 0.1, 0.7, 0.4 } },
-    strokeColor = { default = { 1, 0.4, 0, 1 }, over = { 0.8, 0.8, 1, 1 } },
+    labelColor = {
+      default = { 1, 1, 1, 1 },
+      over = { 1, 1, 1, 0.8 },
+    },
+    fillColor = {
+      default = { 205 / 255, 153 / 255, 69 / 255, 1 },
+      over = { 205 / 255, 153 / 255, 69 / 255, 0.8 },
+    },
+    strokeColor = {
+      default = { 154 / 255, 105 / 255, 38 / 255, 1 },
+      over = { 154 / 255, 105 / 255, 38 / 255, 0.8 },
+    },
     strokeWidth = 4,
     id = "button1",
     label = "Highscores",
