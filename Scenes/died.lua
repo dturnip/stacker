@@ -69,7 +69,6 @@ function scene:create(event)
 
   local highscore = display.newText(
     sceneGroup,
-    -- TODO: Local highscore system
     tostring(getHighScore()):gsub("0", "O"),
     display.contentCenterX,
     score.y + 100,
