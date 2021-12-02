@@ -109,9 +109,7 @@ local function render_ui()
       crate = nil
     end)
 
-    -- TODO: Add an intemediary scene so end of buffer bug doesn't happen:
-    -- Scenes.game -> Scenes.trans -> Scenes.died
-
+    -- TODO: Add dying sfx
     composer.gotoScene("Scenes.died", {
       effect = "crossFade",
       time = 1500,
@@ -156,7 +154,8 @@ function next_layer()
       })
     end)
 
-    GameState.speed = GameState.speed - 0.1
+    -- 20% faster
+    GameState.speed = GameState.speed * 0.8
     return
   end
   GameState.spawnY_level = GameState.spawnY_level + 1
@@ -202,8 +201,10 @@ function drop(crate, buf)
       instantiate_crate(buf, GameState.ct)
     end)
   else
-    next_layer()
-    spawn_buf(GameState.next_bufs[1])
+    timer.performWithDelay(1000, function()
+      next_layer()
+      spawn_buf(GameState.next_bufs[1])
+    end);
   end
 end
 
