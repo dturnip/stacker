@@ -89,7 +89,7 @@ function scene:create(event)
     font = "Menlo",
     onEvent = function(event)
       if event.phase == "ended" then
-        audio.play(start_bt_sfx, { channel = 1 })
+        audio.play(start_bt_sfx)
         --
       end
     end,
