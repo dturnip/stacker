@@ -222,13 +222,18 @@ function instantiate_crate(buf, ct)
   end
 
   if GameState.lives > 0 then
-    local crate = display.newImageRect(
-      mainGroup,
-      "Assets/Crate.png",
-      59.25,
-      59.25
-    )
+    local rand = math.random(1, 5)
 
+    local crate = rand < 5
+        and display.newImageRect(
+          mainGroup,
+          "Assets/Crate.png",
+          59.25,
+          59.25
+        )
+      or display.newSprite(mainGroup, sheet_tnt_crate, sequence_tnt_crate)
+
+    crate.isTNT = rand == 5
     crate.name = "crate"
 
     local dir = buf:sub(1, 1)
@@ -263,7 +268,9 @@ function instantiate_crate(buf, ct)
     timer.performWithDelay(1000 * GameState.speed, function()
       linear_transform = transition.to(crate, {
         time = 4000 * GameState.speed,
-        x = dir == "L" and 0 or dir == "R" and display.actualContentWidth or nil,
+        x = dir == "L" and 0
+          or dir == "R" and display.actualContentWidth
+          or nil,
       })
     end)
   end
@@ -303,15 +310,24 @@ local function onCollision(event)
       local crate = acol.name == "crate" and acol or bcol
       GameState.spike_collided = true
       -- Collided with a spike
-      GameState.lives = GameState.lives - 1
-      if GameState.crates_collided == false then
-        tapEvent()
+      if crate.isTNT == false then
+        GameState.lives = GameState.lives - 1
+        if GameState.crates_collided == false then
+          tapEvent()
+          timer.performWithDelay(150, function()
+            display.remove(crate)
+          end)
+          render_ui()
+        end
+      else
+        -- All lives lost if crate was a TNT crate
+        transition.cancel()
+        GameState.lives = 0
+        crate:play()
+        timer.performWithDelay(1200, function()
+          render_ui()
+        end)
       end
-
-      timer.performWithDelay(150, function()
-        display.remove(crate)
-      end)
-      render_ui()
     elseif acol.name == "crate" and bcol.name == "crate" then
       if
         acol.y - acol.height / 2 < bcol.y
