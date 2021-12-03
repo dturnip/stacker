@@ -210,9 +210,7 @@ function drop(crate, buf)
 end
 
 function instantiate_crate(buf, ct)
-  -- TODO: Randomizer for two different types of crate:
-  -- * TNT Crate
-  -- * Crate with spike on top
+  -- TODO: Add a third type of crate: Crate with spike on top
 
   GameState.ct = ct
 
