@@ -41,6 +41,7 @@ local frames_tnt_crate = {
     { x = 168.0, y = 329.25, width = 67.5, height = 71.25 },
     { x = 275.25, y = 339.75, width = 63.0, height = 65.25 },
     { x = 384.75, y = 366.75, width = 15.75, height = 15.75 },
+    { x = 0, y = 0, width = 0, height = 0 },
   },
 }
 
@@ -48,7 +49,7 @@ local sequence_tnt_crate = {
   {
     name = "explode",
     start = 1,
-    count = 12,
+    count = 13,
     time = 1000,
     loopCount = 1,
     loopDirection = "forward",
@@ -204,7 +205,7 @@ function drop(crate, buf)
     timer.performWithDelay(1000, function()
       next_layer()
       spawn_buf(GameState.next_bufs[1])
-    end);
+    end)
   end
 end
 
