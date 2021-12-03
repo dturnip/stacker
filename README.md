@@ -37,7 +37,7 @@ git clone https://github.com/dturnip/stacker.git
 
 ## Building and Running on Xcode
 
-This repo's code has not been adjusted to support various dimensions so the build won't look accurate. If you do wish to build and run on the Xcode Simulator, Go `File` > `Build` > `iOS` > `Done`
+This repository's code has not been adjusted to support various responsive dimensions so the build won't look accurate. If you do wish to build and run on the Xcode Simulator, open this repository in the Corona Simulator, then go `File` > `Build` > `iOS` > `Done`
 
 ## Game Mechanics
 
