@@ -62,7 +62,7 @@ function scene:create(event)
   start_bt.x, start_bt.y = display.contentCenterX, display.contentCenterY
   sceneGroup:insert(start_bt)
 
-  local high_bt = widget.newButton({
+  local lb_bt = widget.newButton({
     width = 200,
     height = 40,
     emboss = true,
@@ -81,18 +81,18 @@ function scene:create(event)
       over = { 154 / 255, 105 / 255, 38 / 255, 0.8 },
     },
     strokeWidth = 4,
-    id = "button1",
-    label = "Highscores",
+    id = "lb_bt",
+    label = "Leaderboard",
     font = "Menlo",
     onEvent = function(event)
       if event.phase == "ended" then
-        print("clicked")
+        --
       end
     end,
   })
 
-  high_bt.x, high_bt.y = display.contentCenterX, display.contentCenterY + 100
-  sceneGroup:insert(high_bt)
+  lb_bt.x, lb_bt.y = display.contentCenterX, display.contentCenterY + 100
+  sceneGroup:insert(lb_bt)
 end
 
 function scene:show(event)
