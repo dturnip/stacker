@@ -4,6 +4,8 @@ local json = require("json")
 
 local scene = composer.newScene()
 
+local menu_bt_sfx
+
 -- This is persistent
 local path = system.pathForFile("data.json", system.DocumentsDirectory)
 
@@ -112,8 +114,9 @@ function scene:create(event)
     font = "Menlo",
     onEvent = function(event)
       if event.phase == "ended" then
+        audio.play(menu_bt_sfx, { channel = 1 })
         composer.gotoScene("Scenes.menu", {
-          effect = "slideRight",
+          effect = "slideDown",
           time = 1000,
         })
       end
@@ -122,6 +125,8 @@ function scene:create(event)
 
   menu_bt.x, menu_bt.y = display.contentCenterX, highscore.y + 100
   sceneGroup:insert(menu_bt)
+
+  menu_bt_sfx = audio.loadSound("Assets/Sounds/menu_bt.mp3")
 end
 
 function scene:show(event)
@@ -145,6 +150,7 @@ end
 
 function scene:destroy(event)
   local sceneGroup = self.view
+  audio.dispose(menu_bt_sfx)
 end
 
 scene:addEventListener("create", scene)

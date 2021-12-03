@@ -3,6 +3,8 @@ local composer = require("composer")
 
 local scene = composer.newScene()
 
+local start_bt_sfx
+
 function scene:create(event)
   local sceneGroup = self.view
 
@@ -51,8 +53,9 @@ function scene:create(event)
     font = "Menlo",
     onEvent = function(event)
       if event.phase == "ended" then
+        audio.play(start_bt_sfx)
         composer.gotoScene("Scenes.game", {
-          effect = "slideLeft",
+          effect = "slideUp",
           time = 1000,
         })
       end
@@ -86,6 +89,7 @@ function scene:create(event)
     font = "Menlo",
     onEvent = function(event)
       if event.phase == "ended" then
+        audio.play(start_bt_sfx, { channel = 1 })
         --
       end
     end,
@@ -93,6 +97,8 @@ function scene:create(event)
 
   lb_bt.x, lb_bt.y = display.contentCenterX, display.contentCenterY + 100
   sceneGroup:insert(lb_bt)
+
+  start_bt_sfx = audio.loadSound("Assets/Sounds/start_bt.mp3")
 end
 
 function scene:show(event)
@@ -120,6 +126,7 @@ end
 
 function scene:destroy(event)
   local sceneGroup = self.view
+  audio.dispose(start_bt_sfx)
 end
 
 scene:addEventListener("create", scene)

@@ -6,6 +6,9 @@ physics.setGravity(0, 9.8)
 
 local scene = composer.newScene()
 
+local livelost_sfx
+local explode_sfx
+
 local backGroup
 local mainGroup
 local uiGroup
@@ -266,9 +269,7 @@ function instantiate_crate(buf, ct)
     timer.performWithDelay(1000 * GameState.speed, function()
       linear_transform = transition.to(crate, {
         time = 4000 * GameState.speed,
-        x = dir == "L" and 0
-          or dir == "R" and display.actualContentWidth
-          or nil,
+        x = dir == "L" and 0 or dir == "R" and display.actualContentWidth or nil,
       })
     end)
   end
@@ -299,18 +300,20 @@ local function onCollision(event)
 
   if phase == "began" then
     local acol, bcol = event.object1, event.object2
-    -- Debug the collisions
-    -- print(GameState.crates_collided)
+
     if
       acol.name == "crate" and bcol.name == "spike"
       or acol.name == "spike" and bcol.name == "crate"
     then
+      -- Crate collided with a spike
       local crate = acol.name == "crate" and acol or bcol
       GameState.spike_collided = true
-      -- Collided with a spike
+
       if crate.isTNT == false then
+        -- Regular crate
         GameState.lives = GameState.lives - 1
         if GameState.crates_collided == false then
+          audio.play(livelost_sfx, { channel = 2 })
           tapEvent()
           timer.performWithDelay(150, function()
             display.remove(crate)
@@ -318,7 +321,8 @@ local function onCollision(event)
           render_ui()
         end
       else
-        -- All lives lost if crate was a TNT crate
+        -- TNT Crate
+        audio.play(explode_sfx, { channel = 2 })
         transition.cancel()
         GameState.lives = 0
         crate:play()
@@ -333,15 +337,9 @@ local function onCollision(event)
         and GameState.curr_crate ~= nil
       then
         -- Stop both crates
-
         if GameState.spike_collided == false then
           transition.cancel()
           GameState.curr_crate.bodyType = "dynamic"
-
-          if math.abs(acol.x - bcol.x) < 10 then
-            -- Crates phased
-          end
-
           GameState.curr_crate.alpha = 1
           GameState.curr_crate.gravityScale = 1
           GameState.curr_crate.isSensor = true
@@ -516,6 +514,9 @@ function scene:create(event)
   )
 
   render_ui()
+
+  livelost_sfx = audio.loadSound("Assets/Sounds/livelost.mp3")
+  explode_sfx = audio.loadSound("Assets/Sounds/explode.mp3")
 end
 
 -- show()
@@ -558,6 +559,8 @@ end
 function scene:destroy(event)
   local sceneGroup = self.view
   -- Code here runs prior to the removal of scene's view
+  audio.dispose(live_lost_sfx)
+  audio.dispose(explode_sfx)
 end
 
 -- -----------------------------------------------------------------------------------
