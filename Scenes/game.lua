@@ -304,8 +304,6 @@ local function onCollision(event)
       -- Collided with a spike
       GameState.lives = GameState.lives - 1
       if GameState.crates_collided == false then
-        -- drop(crate, GameState.curr_buf)
-        -- GameState.curr_crate = nil
         tapEvent()
       end
 
@@ -392,46 +390,6 @@ function scene:create(event)
 
   platform:setFillColor(0.5)
   physics.addBody(platform, "static")
-
-  -- local frames_tnt_crate = {
-  --   frames = {
-  --     -- Frame 1: TNT Crate
-  --     { x = 35, y = 58, width = 79, height = 79 },
-  --     -- Frame 2: Explode 1
-  --     { x = 178, y = 55, width = 80, height = 80 },
-  --     -- Frame 3: Explode 2
-  --     { x = 325, y = 52, width = 87, height = 87 },
-  --     -- Frame 4: Explode 3
-  --     { x = 474, y = 48, width = 88, height = 88 },
-  --     -- Frame 5: Explode 4
-  --     { x = 32, y = 245, width = 92, height = 92 },
-  --     -- Frame 6: Explode 5
-  --     { x = 168, y = 243, width = 99, height = 94 },
-  --     -- Frame 7: Explode 6
-  --     { x = 314, y = 232, width = 105, height = 118 },
-  --     -- Frame 8: Explode 7
-  --     { x = 464, y = 240, width = 109, height = 117 },
-  --     -- Frame 9: Explode 8
-  --     { x = 33, y = 423, width = 122, height = 139 },
-  --     -- Frame 10: Explode 9
-  --     { x = 224, y = 439, width = 90, height = 95 },
-  --     -- Frame 11: Explode 10
-  --     { x = 367, y = 453, width = 84, height = 87 },
-  --     -- Frame 12: Explode 11
-  --     { x = 513, y = 489, width = 21, height = 21 },
-  --     -- Frame 13: Explode 12
-  --     { x = 0, y = 0, width = 0, height = 0 },
-  --   },
-  -- }
-
-  -- local tnt_crate = display.newSprite(
-  --   mainGroup,
-  --   sheet_tnt_crate,
-  --   sequence_tnt_crate
-  -- )
-  -- tnt_crate.x, tnt_crate.y = display.contentCenterX, display.contentCenterY
-
-  -- physics.addBody(tnt_crate, "dynamic", {})
 
   local side_spikes_l = display.newImageRect(
     mainGroup,
@@ -543,14 +501,6 @@ function scene:create(event)
   )
 
   render_ui()
-
-  -- tnt_crate:addEventListener("tap", function(event)
-  --   event.target:play()
-  --   timer.performWithDelay(1200, function()
-  --     event.target:setFrame(1)
-  --   end)
-  --   return true
-  -- end)
 end
 
 -- show()
