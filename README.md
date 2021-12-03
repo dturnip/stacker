@@ -1,16 +1,16 @@
 # stacker
 
 ## Contents
-* [Prerequisites]()
-* [Dependencies]()
-* [Installation]()
-* [Building and Running on Corona Simulator]()
-* [Building and Running on Xcode]()
-* [Building and Running on iOS]()
-* [Game Mechanics]()
-    - [Flow]()
-    - [Crates]()
-    - [Tricky Stuff]()
+* [Prerequisites](https://github.com/dturnip/stacker#prerequisites)
+* [Dependencies](https://github.com/dturnip/stacker#dependencies)
+* [Installation](https://github.com/dturnip/stacker#installation)
+* [Building and Running on Corona Simulator](https://github.com/dturnip/stacker#building-and-running-on-corona-simulator)
+* [Building and Running on Xcode](https://github.com/dturnip/stacker#building-and-running-on-xcode)
+* [Building and Running on iOS](https://github.com/dturnip/stacker#building-and-running-on-ios)
+* [Game Mechanics](https://github.com/dturnip/stacker#game-mechanics)
+    - [Flow](https://github.com/dturnip/stacker#flow)
+    - [Crates](https://github.com/dturnip/stacker#crates)
+    - [Tricky Stuff](https://github.com/dturnip/stacker#tricky-stuff)
 
 A mobile crate stacking game built with Lua and the Corona SDK.
 
