@@ -1,5 +1,7 @@
 # stacker
 
+A mobile crate stacking game built with Lua and the Corona SDK.
+
 ## Contents
 * [Prerequisites](https://github.com/dturnip/stacker#prerequisites)
 * [Dependencies](https://github.com/dturnip/stacker#dependencies)
@@ -11,8 +13,6 @@
     - [Flow](https://github.com/dturnip/stacker#flow)
     - [Crates](https://github.com/dturnip/stacker#crates)
     - [Tricky Stuff](https://github.com/dturnip/stacker#tricky-stuff)
-
-A mobile crate stacking game built with Lua and the Corona SDK.
 
 ## Prerequisites
 
